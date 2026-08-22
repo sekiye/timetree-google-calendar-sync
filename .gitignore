@@ -1,0 +1,27 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*service-account*.json
+google-credentials*.json
+*.base64
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Development / investigation
+archive/
+poc_*.py
+inspect_*.py
+
+# Playwright/debug artifacts
+test-results/
+playwright-report/
+screenshots/
+*.log
