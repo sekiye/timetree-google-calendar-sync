@@ -193,17 +193,22 @@ async def login(
         wait_until="domcontentloaded",
     )
 
-    email_input = page.get_by_label(
-        "メールアドレス",
-        exact=True,
-    )
+    # Do not depend on the TimeTree UI language.
+    # GitHub Actions runners may render the sign-in page in English.
+    email_input = page.locator(
+        'input[type="email"]'
+    ).first
 
-    password_input = page.get_by_label(
-        "パスワード",
-        exact=True,
-    )
+    password_input = page.locator(
+        'input[type="password"]'
+    ).first
 
     await email_input.wait_for(
+        state="visible",
+        timeout=15000,
+    )
+
+    await password_input.wait_for(
         state="visible",
         timeout=15000,
     )
@@ -211,11 +216,9 @@ async def login(
     await email_input.fill(email)
     await password_input.fill(password)
 
-    await page.get_by_role(
-        "button",
-        name="ログイン",
-        exact=True,
-    ).click()
+    # Submitting with Enter avoids depending on the localized
+    # login button text ("ログイン", "Log In", etc.).
+    await password_input.press("Enter")
 
     await password_input.wait_for(
         state="hidden",
@@ -1906,7 +1909,10 @@ async def fetch_timetree_events(
             headless=headless
         )
 
-        page = await browser.new_page()
+        page = await browser.new_page(
+            locale="ja-JP",
+            timezone_id="Asia/Tokyo",
+        )
 
         try:
             print("LOGIN...")
